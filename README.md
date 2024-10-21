@@ -22,15 +22,26 @@ Sub VerileriAyirTopla()
             If i - 1 >= baslangicSatir Then
                 toplam = WorksheetFunction.Sum(ws.Range("G" & baslangicSatir & ":G" & i - 1))
                 ws.Cells(baslangicSatir, "H").Value = toplam
+                
+                ' I sütununa formülü yazdır (aynı grup için aynı formül)
+                Dim j As Long
+                For j = baslangicSatir To i - 1
+                    ws.Cells(j, "I").Formula = "=bazmalzeme[@[Kullanılan Miktar]]/H$" & baslangicSatir
+                Next j
             End If
             ' Yeni grup başlangıcı
             baslangicSatir = i
         End If
     Next i
 
-    ' Son grup için toplam işlemi
+    ' Son grup için toplam işlemi ve I sütununa formül yazdırma
     toplam = WorksheetFunction.Sum(ws.Range("G" & baslangicSatir & ":G" & sonSatir))
     ws.Cells(baslangicSatir, "H").Value = toplam
+
+    ' Son grup için formülü yazdır (aynı grup için aynı formül)
+    For j = baslangicSatir To sonSatir
+        ws.Cells(j, "I").Formula = "=bazmalzeme[@[Kullanılan Miktar]]/H$" & baslangicSatir
+    Next j
 
     ' 2. Adım: E, F, G sütunları tamamen boş olan satırları sil
     For i = sonSatir To 2 Step -1
@@ -67,3 +78,4 @@ Sub VerileriAyirTopla()
     Next i
 
 End Sub
+
