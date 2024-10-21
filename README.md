@@ -32,8 +32,29 @@ Sub VerileriAyirTopla()
     toplam = WorksheetFunction.Sum(ws.Range("G" & baslangicSatir & ":G" & sonSatir))
     ws.Cells(baslangicSatir, "H").Value = toplam
 
-    ' 2. Adım: Farklı veriler arasında kalın çizgi çekme
-    ' Bu kısmı geliştirdik, çizgi çekme işlemi daha kesin olacak
+    ' 2. Adım: E, F, G sütunları tamamen boş olan satırları sil
+    For i = sonSatir To 2 Step -1
+        If IsEmpty(ws.Cells(i, "E")) And IsEmpty(ws.Cells(i, "F")) And IsEmpty(ws.Cells(i, "G")) Then
+            ws.Rows(i).Delete
+        End If
+    Next i
+    
+    ' 3. Adım: G sütunundaki bilgileri J sütununa kopyalama
+    ' G sütunundaki veri G2'den itibaren başlar, J sütununa kopyalanacak
+    For i = 2 To sonSatir
+        If Not IsEmpty(ws.Cells(i, "G")) Then
+            ' G hücresini J sütununa kopyala
+            ws.Cells(i, "J").Value = ws.Cells(i, "G").Value
+            ' Biçimleri de kopyala
+            ws.Cells(i, "J").Interior.Color = ws.Cells(i, "G").Interior.Color
+            ws.Cells(i, "J").Font.Color = ws.Cells(i, "G").Font.Color
+            ws.Cells(i, "J").Font.Bold = ws.Cells(i, "G").Font.Bold
+            ws.Cells(i, "J").Borders.LineStyle = ws.Cells(i, "G").Borders.LineStyle
+        End If
+    Next i
+    
+    ' 4. Adım: Farklı veriler arasında kalın çizgi çekme
+    ' Çizgileri en son ekliyoruz, böylece diğer işlemler kalın çizginin üstüne gelmez
     For i = 2 To sonSatir
         ' Eğer A sütunundaki mevcut veri, bir önceki satırdan farklıysa
         If ws.Cells(i, 1).Value <> ws.Cells(i - 1, 1).Value Then
@@ -42,13 +63,6 @@ Sub VerileriAyirTopla()
                 .LineStyle = xlContinuous
                 .Weight = xlThick
             End With
-        End If
-    Next i
-
-    ' 3. Adım: E, F, G sütunları tamamen boş olan satırları sil
-    For i = sonSatir To 2 Step -1
-        If IsEmpty(ws.Cells(i, "E")) And IsEmpty(ws.Cells(i, "F")) And IsEmpty(ws.Cells(i, "G")) Then
-            ws.Rows(i).Delete
         End If
     Next i
 
